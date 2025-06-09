@@ -9,11 +9,24 @@ Interface Web HTML/JS permettant de :
 - Récupérer l’ID Token, Access Token, et d’autres informations du compte
 - Renouveler automatiquement l’Access Token via MSAL
 
-## 🖼️ Capture d’écran
+## 🖼️ Aperçu de l’interface utilisateur
 
-Aperçu de l’interface utilisateur :
+Voici deux écrans clés de l'application web :
 
-![Étape 1](docs/screenshots/1.png)
+### 1️⃣ Page de connexion
+
+![Page de connexion](docs/screenshots/login.png)
+
+---
+
+### 2️⃣ Interface principale après connexion
+
+![Interface principale](docs/screenshots/dashboard.png)
+
+➡️ L'utilisateur connecté peut consulter ses informations d'identité, ID Token, Access Token, et renouveler son jeton.
+
+🔐 Cette interface est générée dynamiquement à l'aide de [MSAL.js](https://github.com/AzureAD/microsoft-authentication-library-for-js).
+
 
 ➡️ La documentation complète contient toutes les captures étape par étape.
 
