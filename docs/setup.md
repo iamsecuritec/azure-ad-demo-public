@@ -95,3 +95,9 @@ const msalConfig = {
 ```
 
 Et tester votre application 🧪
+
+🛡️ Avertissement
+Ce projet est fourni à titre éducatif. Ne pas utiliser tel quel en production.
+Assurez-vous de sécuriser les identifiants et de respecter les bonnes pratiques OAuth 2.0.
+
+✨ Créé avec passion par Antonio Ferreira
