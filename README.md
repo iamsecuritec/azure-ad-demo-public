@@ -28,27 +28,8 @@ Aperçu de l’interface utilisateur :
 
 ## 🚀 Lancer le projet en local
 
-2. Ouvrir `index.html` dans un navigateur
+1. Cloner le dépôt :
 
-3. Modifier la configuration dans le fichier pour insérer votre propre `clientId` et `tenantId` :
-
-```js
-const msalConfig = {
-  auth: {
-    clientId: "VOTRE_CLIENT_ID",
-    authority: "https://login.microsoftonline.com/VOTRE_TENANT_ID",
-    redirectUri: window.location.href
-  }
-};
-
-
-## 🛡️ Avertissement
-
-Ce projet est fourni à titre éducatif. **Ne pas utiliser tel quel en production.**  
-Assurez-vous de sécuriser les identifiants et de respecter les bonnes pratiques OAuth 2.0.
-
----
-
-✨ *Créé avec passion par [Antonio Ferreira](https://github.com/antoniofos88)*
-
-
+```bash
+git clone https://github.com/antoniofos88/azure-ad-demo-public.git
+cd azure-ad-demo-public
