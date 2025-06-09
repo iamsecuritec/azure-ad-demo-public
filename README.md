@@ -42,22 +42,6 @@ const msalConfig = {
 };
 
 
----
-
-#### ✅ 2. Ajoute un encadré d’avertissement + signature
-
-Tu peux le coller tout à la fin du fichier `README.md` :
-
-```markdown
-## 🛡️ Avertissement
-
-Ce projet est fourni à titre éducatif. **Ne pas utiliser tel quel en production.**
-Assurez-vous de sécuriser les identifiants et de respecter les bonnes pratiques OAuth 2.0.
-
----
-
-✨ *Créé avec passion par [Antonio Ferreira](https://github.com/antoniofos88)*
-
 
 1. Cloner le dépôt :
 
