@@ -40,3 +40,4 @@ const msalConfig = {
     redirectUri: window.location.href
   }
 };
+
