@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Démo Azure AD Login</title>
+    <script src="https://alcdn.msauth.net/browser/2.38.2/js/msal-browser.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #e0f0ff;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            min-width: 100vw;
+        }
+        h1 {
+            color: #2d3e50;
+            text-align: center;
+            width: 100%;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            align-self: flex-start;
+        }
+        .btn {
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 12px 22px;
+            margin: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn:disabled {
+            background: #b3c6e6;
+            cursor: not-allowed;
+        }
+        .btn:hover:not(:disabled) {
+            background: #1e40af;
+        }
+        #result {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px #0001;
+            padding: 20px;
+            margin-top: 0;
+            width: 100%;
+            max-width: 900px;
+            min-height: 60px;
+            font-size: 1rem;
+            color: #222;
+            white-space: pre-wrap;
+            word-break: break-all;
+            box-sizing: border-box;
+        }
+        #welcome {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            color: #2563eb;
+            font-weight: bold;
+        }
+        .explain {
+            font-size: 0.95rem;
+            color: #444;
+            margin-left: 10px;
+        }
+        .btn-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        .btns-container-and-result {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            gap: 32px;
+        }
+        .btns-container {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            min-width: 220px;
+        }
+        .result-block {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            width: 100%;
+            max-width: 900px;
+            margin-right: 40px;
+        }
+        .sidebar {
+            width: 250px;
+            background: #fff;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            box-sizing: border-box;
+            position: fixed;
+            height: 100%;
+            overflow-y: auto;
+        }
+        .sidebar h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #2563eb;
+        }
+        .sidebar a {
+            display: block;
+            padding: 10px;
+            margin: 10px 0;
+            color: #2563eb;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        .sidebar a:hover {
+            background: #f3f4f6;
+        }
+        .main-content {
+            margin-left: 270px;
+            padding: 20px;
+            box-sizing: border-box;
+            flex: 1;
+        }
+        .logout-icon-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .logout-icon-btn:hover {
+            background: #1e40af;
+        }
+    </style>
+</head>
+<body>
+    <!-- Première page : Login -->
+    <div id="page-login" style="
+        display: flex;
+        flex-direction: column;
+        justify-content: center;      /* Centre verticalement */
+        align-items: center;          /* Centre horizontalement */
+        min-height: 100vh;
+        width: 100vw;
+        background: #000;
+    ">
+        <h1 style="color: #fff; text-align: center; margin-bottom: 32px;">
+            Fluxo d'authentification OAuth2/OpenID
+        </h1>
+        <button id="ms-login-btn" class="btn ms-login-btn" style="
+            background: #fff;
+            color: #222;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 0;
+        ">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" alt="Microsoft" style="height: 22px;">
+            <span>Se connecter avec Microsoft</span>
+        </button>
+    </div>
+
+    <!-- Deuxième page uniquement -->
+    <div id="page-app" style="display: none;">
+        <div class="sidebar">
+            <h2>Menu</h2>
+            <a href="#" id="btn1">Générales</a>
+            <a href="#" id="btn2">Account</a>
+            <a href="#" id="btn3">IDtoken</a>
+            <a href="#" id="btn4">AccessToken</a>
+            <a href="#" id="btn5">Expiration AccessToken</a>
+            <a href="#" id="btn6">Renouveler AccessToken</a>
+        </div>
+        <div class="main-content">
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <button id="logoutBtn" class="logout-icon-btn" title="Se déconnecter">
+                    <!-- Icône de déconnexion (SVG) -->
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="12" fill="#2563eb"/>
+                        <path d="M16 12H8M8 12L11 9M8 12L11 15" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                <span id="welcome"></span>
+            </div>
+            <h1>Fluxo d'authentification OAuth2/OpenID</h1>
+            <div class="btns-container-and-result">
+                <div class="result-block">
+                    <pre id="result"></pre>
+                    <button id="copyBtn" class="btn copy-btn">Copier le contenu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Configuration MSAL pour Azure AD
+        const msalConfig = {
+            auth: {
+                clientId: "f4975a10-bc99-40a2-bd18-20ce863052e3",
+                authority: "https://login.microsoftonline.com/beb844e3-d737-4bba-b3c7-e92a301981ff",
+                redirectUri: window.location.href
+            }
+        };
+        const msalInstance = new msal.PublicClientApplication(msalConfig);
+        let loginResponse = null;
+
+        // Affiche la page app
+        function showAppPage() {
+            document.getElementById("page-login").style.display = "none";
+            document.getElementById("page-app").style.display = "block";
+        }
+
+        // Fonction pour se déconnecter (popup)
+        async function signOut() {
+            await msalInstance.logoutPopup();
+            loginResponse = null;
+            location.reload();
+        }
+
+        // Associe le bouton logout à sa fonction
+        document.getElementById("logoutBtn").addEventListener("click", signOut);
+
+        // Login Microsoft réel avec popup
+        document.getElementById("ms-login-btn").addEventListener("click", async () => {
+            try {
+                const response = await msalInstance.loginPopup({ scopes: ["User.Read"] });
+                loginResponse = response;
+                showAppPage();
+                document.getElementById("welcome").textContent = "Bienvenue, " + (loginResponse.account.name || "utilisateur") + " !";
+                document.getElementById("result").textContent = "Connecté !";
+            } catch (e) {
+                alert("Erreur de connexion : " + e);
+            }
+        });
+
+        // Boutons du menu
+        document.getElementById("btn1").addEventListener("click", () => {
+            if (loginResponse) {
+                const { authority, uniqueId, tenantId, scopes } = loginResponse;
+                document.getElementById("result").textContent = JSON.stringify({ authority, uniqueId, tenantId, scopes }, null, 2);
+            }
+        });
+        document.getElementById("btn2").addEventListener("click", () => {
+            if (loginResponse) {
+                document.getElementById("result").textContent = JSON.stringify(loginResponse.account, null, 2);
+            }
+        });
+        document.getElementById("btn3").addEventListener("click", () => {
+            if (loginResponse) {
+                document.getElementById("result").textContent = JSON.stringify({ idToken: loginResponse.idToken, idTokenClaims: loginResponse.account.idTokenClaims }, null, 2);
+            }
+        });
+        document.getElementById("btn4").addEventListener("click", () => {
+            if (loginResponse) {
+                document.getElementById("result").textContent = JSON.stringify({ accessToken: loginResponse.accessToken }, null, 2);
+            }
+        });
+        document.getElementById("btn5").addEventListener("click", () => {
+            if (loginResponse && loginResponse.accessToken) {
+                try {
+                    const payload = JSON.parse(atob(loginResponse.accessToken.split('.')[1]));
+                    const expDate = new Date(payload.exp * 1000);
+                    document.getElementById("result").textContent =
+                        "Expiration accessToken : " + expDate.toLocaleString() +
+                        "\n(exp = " + payload.exp + ")";
+                } catch (e) {
+                    document.getElementById("result").textContent = "Impossible de décoder le token.";
+                }
+            }
+        });
+        document.getElementById("btn6").addEventListener("click", async () => {
+            if (loginResponse && loginResponse.account) {
+                const request = {
+                    scopes: ["User.Read"],
+                    account: loginResponse.account
+                };
+                try {
+                    const response = await msalInstance.acquireTokenSilent(request);
+                    loginResponse.accessToken = response.accessToken;
+                    const payload = JSON.parse(atob(response.accessToken.split('.')[1]));
+                    const expDate = new Date(payload.exp * 1000);
+                    document.getElementById("result").textContent =
+                        "Nouveau accessToken obtenu !\nExpiration : " + expDate.toLocaleString() +
+                        "\n(exp = " + payload.exp + ")";
+                } catch (e) {
+                    document.getElementById("result").textContent = "Erreur lors du renouvellement : " + e;
+                }
+            }
+        });
+
+        // Copier le contenu
+        async function copyToClipboard() {
+            const resultElement = document.getElementById("result");
+            if (resultElement && resultElement.textContent) {
+                try {
+                    await navigator.clipboard.writeText(resultElement.textContent);
+                    document.getElementById("result").textContent = "Contenu copié dans le presse-papiers !";
+                } catch (err) {
+                    document.getElementById("result").textContent = "Erreur lors de la copie : " + err;
+                }
+            }
+        }
+        document.getElementById("copyBtn").addEventListener("click", copyToClipboard);
+    </script>
+</body>
+</html>
