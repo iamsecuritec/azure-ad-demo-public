@@ -40,11 +40,3 @@ const msalConfig = {
     redirectUri: window.location.href
   }
 };
-
-
-
-1. Cloner le dépôt :
-
-```bash
-git clone https://github.com/antoniofos88/azure-ad-demo-public.git
-cd azure-ad-demo-public
