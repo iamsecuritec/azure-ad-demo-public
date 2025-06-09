@@ -33,15 +33,3 @@ Aperçu de l’interface utilisateur :
 ```bash
 git clone https://github.com/antoniofos88/azure-ad-demo-public.git
 cd azure-ad-demo-public
-2. Ouvrir `index.html` dans un navigateur
-
-3. Modifier la configuration dans le fichier pour insérer votre propre `clientId` et `tenantId` :
-
-```js
-const msalConfig = {
-  auth: {
-    clientId: "VOTRE_CLIENT_ID",
-    authority: "https://login.microsoftonline.com/VOTRE_TENANT_ID",
-    redirectUri: window.location.href
-  }
-};
